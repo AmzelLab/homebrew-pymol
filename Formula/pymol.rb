@@ -31,12 +31,12 @@ class Pymol < Formula
   # Patch that makes the OS X native windowing system (Aqua) and PyMol play nicely together.
   # Fixes https://sourceforge.net/p/pymol/bugs/187/ (05.09.17) and
   # https://github.com/Homebrew/homebrew-science/issues/5505 (04.27.17), in which bad GUI calls were causing segfaults.
-  #patch do
-  #  url 
+  patch do
+    url "https://raw.githubusercontent.com/telamonian/homebrew-pymol/master/Patch/pymol-v3.patch"
     #url "https://sourceforge.net/p/pymol/patches/_discuss/thread/b4038fa6/f094/attachment/tk-aqua-v2.patch"
     #url "https://gist.githubusercontent.com/telamonian/494150cf2992d324272de9a0ded78e37/raw/9abce6d6f97b3943856b63f83ad5b7352c339926/osx_aqua_ext_gui_fix.diff"
     #sha256 "14cef03169290500a8232c9ab78964fa169bcd0854a01ced95ccbe55bd70e2c6"
-  #end
+  end
 
   def install
     args = %W[
