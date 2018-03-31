@@ -31,7 +31,9 @@ class Pymol < Formula
 
   def install
     args = %W[
+      --prefix=#{prefix}
       --bundled-pmw
+      --record=installed.txt
       --install-scripts=#{libexec}/bin
       --install-lib=#{libexec}/lib/python2.7/site-packages
     ]
@@ -43,7 +45,7 @@ class Pymol < Formula
       # support for older Mac OS
       ENV.append_to_cflags "-Qunused-arguments" if MacOS.version < :mavericks
 
-      system "python3", *Language::Python.setup_install_args(prefix), *args
+      system "python3", "-s", "setup.py", "install", *args
       # system "python2", "-s", "setup.py", "install", *args
     else
       # on linux, add the path hint that setup.py needs in order to find the freetype and libxml2 headers
