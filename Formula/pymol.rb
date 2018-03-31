@@ -7,66 +7,38 @@ class Pymol < Formula
 
   depends_on "glew"
   depends_on "msgpack"
-  depends_on :x11
-
-  if OS.mac?
-    depends_on "python"
-  else
-    depends_on "freetype"
-    depends_on "gpatch" # see homebrew/homebrew-science#5102
-    depends_on "tcl-tk"
-    depends_on "libxml2"
-    depends_on "python" => "with-tcl-tk"
-  end
+  depends_on "freetype"
+  depends_on "libxml2"
+  depends_on "freeglut"
+  depends_on "libpng"
+  depends_on "qt5"
+  depends_on "python"
+  depends_on :xcode => :build
 
   needs :cxx11
 
-  # Patch that makes the OS X native windowing system (Aqua) and PyMol play nicely together.
-  # Fixes https://sourceforge.net/p/pymol/bugs/187/ (05.09.17) and
-  # https://github.com/Homebrew/homebrew-science/issues/5505 (04.27.17), in which bad GUI calls were causing segfaults.
-  patch do
-    url "https://raw.githubusercontent.com/AmzelLab/homebrew-pymol/master/Patch/pymol-v4.patch"
-    sha256 "3a025423e8c7325f279aa6a2cc2699cf5dc9b7a8b64f2ab3e6095117937a20d6"
-  end
-
   def install
+    # https://sourceforge.net/p/pymol/bugs/202/ reports that QT-based
+    # pymol 2.1 could mistakenly be linked with X11's library. The flag
+    # "--osx-frameworks" should be present to prevent such issue.
     args = %W[
       --prefix=#{prefix}
-      --record=installed.txt
       --install-scripts=#{libexec}/bin
-      --install-lib=#{libexec}/lib/python2.7/site-packages
+      --osx-frameworks
     ]
 
-    if OS.mac?
-      # clang emits >1e5 lines of nullability warnings for pymol, turn them off
-      ENV.append_to_cflags "-Wno-nullability-completeness"
-
-      # support for older Mac OS
-      ENV.append_to_cflags "-Qunused-arguments" if MacOS.version < :mavericks
-
-      system "python3", "-s", "setup.py", "install", *args
-      # system "python2", "-s", "setup.py", "install", *args
-    else
-      # on linux, add the path hint that setup.py needs in order to find the freetype and libxml2 headers
-      ENV.prepend_path "PREFIX_PATH", ENV["HOMEBREW_PREFIX"]
-
-      # because the linux python dep is specified with "python" instead of :python, python2 is needed here
-      system "python2", "-s", "setup.py", "install", *args
-    end
-
+    # clang emits >1e5 lines of nullability warnings for pymol, turn them off
+    ENV.append_to_cflags "-Wno-nullability-completeness"
+    # support for older Mac OS
+    ENV.append_to_cflags "-Qunused-arguments" if MacOS.version < :mavericks
+    system "python3", "-s", "setup.py", "install", *args
     bin.install libexec/"bin/pymol"
   end
 
-  def caveats; <<-EOS.undent
-    On some Macs, the graphics drivers do not properly support stereo
-    graphics. This will cause visual glitches and shaking that stay
-    visible until X11 is completely closed. This may even require
-    restarting your computer. Launch explicitly in Mono mode using:
-      pymol -M
+  def caveats; <<~EOS
+    This version of Pymol 2.1 is powered with PyQt5. You have to install PyQt5
+    with `pip3 install PyQt5` to make it work. We don't want to support the
+    depecrated X11/XQuartz anymore since it is always very awkward.
     EOS
-  end
-
-  test do
-    system bin/"pymol", libexec/"lib/python2.7/site-packages/pymol/pymol_path/data/demo/pept.pdb"
   end
 end
