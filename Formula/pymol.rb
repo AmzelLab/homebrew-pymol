@@ -32,7 +32,6 @@ class Pymol < Formula
   def install
     args = %W[
       --prefix=#{prefix}
-      --bundled-pmw
       --record=installed.txt
       --install-scripts=#{libexec}/bin
       --install-lib=#{libexec}/lib/python2.7/site-packages
