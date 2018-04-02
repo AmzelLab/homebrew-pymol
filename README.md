@@ -13,7 +13,8 @@ If you install python3 via brew, then you can use the following
 command to install PyQt5 and pymol.
 
 ```
-pip3 install PyQt5
+# This step is optional if these Python packages are installed.
+pip3 install numpy pmw PyQt5
 brew tap AmzelLab/homebrew-pymol
 brew install pymol
 ```
