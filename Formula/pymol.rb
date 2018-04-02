@@ -8,11 +8,14 @@ class Pymol < Formula
   depends_on "glew"
   depends_on "msgpack"
   depends_on "freetype"
-  depends_on "libxml2"
+  # Don't know why this causes error on Sierra.
+  # depends_on "libxml2"
   depends_on "freeglut"
   depends_on "libpng"
   depends_on "qt5"
   depends_on "python"
+  # Sometimes clang 9.0.0 shipped with Apple is problematic.
+  depends_on "llvm"
   depends_on :xcode => :build
 
   needs :cxx11
